@@ -2,19 +2,6 @@ import mongoose from "mongoose";
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
-// FIX: Set Google DNS and force IPv4 to avoid querySrv ECONNREFUSED
-import dns from 'dns';
-try {
-    // This is often more effective than setServers for Node 17+
-    if (dns.setDefaultResultOrder) {
-        dns.setDefaultResultOrder('ipv4first');
-    }
-    dns.setServers(['8.8.8.8']);
-    console.log('MongoDB: Custom DNS settings applied');
-} catch (e) {
-    console.error('Failed to set custom DNS:', e);
-}
-
 declare global {
     var mongooseCache: {
         conn: typeof mongoose | null;
@@ -47,6 +34,6 @@ export const connectToDatabase = async () => {
         throw err;
     }
 
-    console.log(`MongoDB Connected ${MONGODB_URI} in ${process.env.NODE_ENV}`);
+    console.log(`MongoDB Connected: ${cached.conn.connection.name} in ${process.env.NODE_ENV}`);
     return cached.conn;
 }
